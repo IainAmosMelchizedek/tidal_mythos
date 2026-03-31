@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tidal Mythos — Iain Amos Melchizedek</title>
+<meta name="description" content="A mythic maritime personal website for Iain Amos Melchizedek." />
+<style>
+:root{
+  --bg:#03111f; --bg2:#071a2e; --panel:rgba(8,26,43,.76); --text:#eaf4ff; --muted:#a8bed3;
+  --line:rgba(164,214,255,.16); --cyan:#7ce8ff; --indigo:#7d8cff; --violet:#b08bff; --magenta:#ff65cf; --gold:#ffd58f;
+  --radius:24px; --shadow:0 24px 70px rgba(0,0,0,.34); --max:1320px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(124,232,255,.12), transparent 0 32%),
+    radial-gradient(circle at 80% 14%, rgba(125,140,255,.12), transparent 0 22%),
+    radial-gradient(circle at 55% 88%, rgba(255,101,207,.08), transparent 0 26%),
+    linear-gradient(180deg,#02101d 0%,#04172a 45%,#02101d 100%);
+  min-height:100vh; overflow-x:hidden;
+}
+canvas{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:0}
+.noise{position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.05; mix-blend-mode:soft-light;
+  background-image:radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px); background-size:8px 8px}
+.shell{position:relative; z-index:2; width:min(var(--max), calc(100% - 32px)); margin:0 auto}
+.topbar{position:sticky; top:0; z-index:30; backdrop-filter:blur(18px); background:rgba(2,13,24,.72); border-bottom:1px solid rgba(255,255,255,.08)}
+.nav{position:relative; display:flex; justify-content:space-between; align-items:center; gap:16px; min-height:86px}
+.brand{display:flex; align-items:center; gap:14px; min-width:240px}
+.brand-mark{width:44px; height:44px; display:grid; place-items:center; border-radius:50%;
+  border:1px solid rgba(255,255,255,.14); background:linear-gradient(135deg, rgba(124,232,255,.2), rgba(125,140,255,.15))}
+.brand-copy{letter-spacing:.06em; text-transform:uppercase}
+.brand-copy strong{display:block; font-size:1.55rem; line-height:1}
+.brand-copy span{display:block; font-weight:800; font-size:.76rem; margin-top:4px; letter-spacing:.18em}
+.signature{position:absolute; left:50%; transform:translateX(-50%); text-align:center; pointer-events:none; max-width:430px}
+.signature-name{text-transform:uppercase; letter-spacing:.22em; color:rgba(255,255,255,.84); font-size:.88rem}
+.signature-title{margin-top:6px; color:var(--cyan); letter-spacing:.18em; text-transform:uppercase; font-size:.88rem}
+.links{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; min-width:260px}
+.links a,.btn,.tool-button,.ghost-btn{
+  color:var(--text); text-decoration:none; border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.03); border-radius:999px; transition:.22s ease;
+}
+.links a{padding:11px 16px}
+.links a:hover,.btn:hover,.tool-button:hover,.ghost-btn:hover{transform:translateY(-1px); border-color:rgba(124,232,255,.34); box-shadow:0 12px 28px rgba(0,0,0,.22)}
+.hero{min-height:100vh; display:grid; align-items:center; padding:54px 0 36px}
+.hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:30px; align-items:center}
+.eyebrow{display:inline-flex; gap:10px; align-items:center; padding:10px 16px; border-radius:999px;
+  border:1px solid rgba(124,232,255,.18); background:rgba(124,232,255,.08); color:var(--cyan);
+  text-transform:uppercase; letter-spacing:.08em; font-size:.84rem; margin-bottom:16px}
+h1{margin:0; line-height:.95; letter-spacing:-.05em; font-size:clamp(3.2rem,8vw,6.8rem)}
+.headline-white{color:var(--text)}
+.headline-gradient{display:block; background:linear-gradient(90deg,#d6ebff 0%, var(--indigo) 22%, var(--violet) 50%, var(--magenta) 84%); -webkit-background-clip:text; background-clip:text; color:transparent}
+.lead{color:var(--muted); font-size:clamp(1.02rem,2vw,1.14rem); line-height:1.78; max-width:68ch; margin:24px 0 26px}
+.hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:28px}
+.btn{padding:14px 20px; font-weight:700; display:inline-flex; align-items:center; gap:10px}
+.btn.primary{background:linear-gradient(180deg, rgba(124,232,255,.18), rgba(124,232,255,.08))}
+.metrics{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+.card{border-radius:var(--radius); border:1px solid var(--line); background:var(--panel); backdrop-filter:blur(16px); box-shadow:var(--shadow)}
+.metric{padding:20px; text-align:center}
+.metric-symbol{display:block; font-size:3rem; line-height:1; font-weight:900; letter-spacing:-.05em; margin-bottom:12px}
+.metric-label{color:var(--muted); font-size:1rem; line-height:1.5}
+.hero-visual{position:relative; min-height:640px}
+.orb{position:absolute; border-radius:50%; filter:blur(10px); opacity:.7; animation:pulse 9s ease-in-out infinite}
+.orb.one{width:150px;height:150px;background:rgba(124,232,255,.18);top:12%;right:10%}
+.orb.two{width:220px;height:220px;background:rgba(125,140,255,.16);bottom:18%;left:10%;animation-delay:-3s}
+.orb.three{width:120px;height:120px;background:rgba(255,101,207,.12);top:46%;left:24%;animation-delay:-5s}
+.compass{position:absolute; inset:6% 8% auto auto; width:min(420px,92%); aspect-ratio:1; border-radius:50%;
+  border:1px solid rgba(255,255,255,.08); background:
+  radial-gradient(circle at center, rgba(255,255,255,.05), transparent 58%),
+  conic-gradient(from 0deg, rgba(124,232,255,.07), transparent 20%, rgba(125,140,255,.12) 46%, transparent 66%, rgba(255,101,207,.09) 84%, transparent 100%),
+  rgba(255,255,255,.02)}
+.compass:before,.compass:after{content:""; position:absolute; border-radius:50%; border:1px solid rgba(255,255,255,.08)}
+.compass:before{inset:10%}.compass:after{inset:24%; border-style:dashed; opacity:.7}
+.needle{position:absolute; left:50%; top:50%; width:4px; height:40%; transform-origin:center calc(100% - 12px);
+  transform:translate(-50%,-85%) rotate(19deg); background:linear-gradient(180deg,var(--gold),transparent); border-radius:999px; animation:sway 9s ease-in-out infinite}
+.needle:after{content:""; position:absolute; bottom:-18px; left:50%; width:18px; height:18px; transform:translateX(-50%); border-radius:50%;
+  background:radial-gradient(circle,#fff 0,var(--gold) 38%, rgba(255,213,143,.2) 70%)}
+.ship-card{position:absolute; right:0; bottom:0; width:min(500px,100%); padding:24px; overflow:hidden}
+.ship-art{position:relative; height:250px; overflow:hidden; border-radius:20px; border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(180deg, rgba(124,232,255,.08), rgba(3,17,31,.25)), radial-gradient(circle at 75% 16%, rgba(255,255,255,.17), transparent 0 12%)}
+.moon{position:absolute; width:74px; height:74px; border-radius:50%; right:28px; top:24px;
+  background:radial-gradient(circle at 35% 35%, #fff 0, #f3f5ff 28%, rgba(255,255,255,.5) 62%, transparent 68%)}
+.boat{position:absolute; left:50%; bottom:34px; transform:translateX(-50%); width:210px; height:112px; animation:bob 4.2s ease-in-out infinite}
+.hull{position:absolute; left:37px; bottom:0; width:138px; height:30px; background:linear-gradient(180deg,#162739,#07131f); clip-path:polygon(0 0,100% 0,84% 100%,16% 100%)}
+.mast{position:absolute; left:100px; bottom:24px; width:4px; height:74px; background:linear-gradient(180deg,#d5b36b,#82693d)}
+.sail.one,.sail.two{position:absolute}
+.sail.one{left:102px; bottom:54px; width:0; height:0; border-right:54px solid transparent; border-bottom:58px solid rgba(240,248,255,.95)}
+.sail.two{left:51px; bottom:46px; width:0; height:0; border-left:40px solid transparent; border-bottom:44px solid rgba(227,241,249,.95)}
+.wake,.wave-line{position:absolute; left:0; right:0; border-radius:999px}
+.wake{bottom:20px; height:12px; background:radial-gradient(circle at 50% 50%, rgba(124,232,255,.56), transparent 44%); filter:blur(10px); opacity:.7}
+.wave-line{bottom:0; height:72px; background:
+ radial-gradient(34px 20px at 24px 42px, transparent 55%, rgba(124,232,255,.18) 57% 62%, transparent 64%),
+ radial-gradient(42px 24px at 104px 44px, transparent 55%, rgba(124,232,255,.16) 57% 62%, transparent 64%),
+ radial-gradient(38px 22px at 186px 42px, transparent 55%, rgba(124,232,255,.17) 57% 62%, transparent 64%),
+ radial-gradient(44px 26px at 272px 44px, transparent 55%, rgba(124,232,255,.18) 57% 62%, transparent 64%);
+ background-size:320px 72px; animation:drift 9s linear infinite; opacity:.88}
+.section{padding:78px 0}
+.section-head{display:flex; justify-content:space-between; align-items:end; gap:18px; flex-wrap:wrap; margin-bottom:28px}
+.section h2{margin:0; font-size:clamp(2rem,4.8vw,3.4rem); line-height:1; letter-spacing:-.04em}
+.section-copy{margin:10px 0 0; color:var(--muted); max-width:68ch; line-height:1.8}
+.grid-3,.grid-2,.archive-grid{display:grid; gap:18px}
+.grid-3{grid-template-columns:repeat(3,1fr)} .grid-2{grid-template-columns:repeat(2,1fr)} .archive-grid{grid-template-columns:1.15fr .85fr}
+.panel,.archive-card,.manifest{padding:26px; position:relative; overflow:hidden}
+.panel:before{content:""; position:absolute; width:220px; height:220px; right:-90px; bottom:-110px; background:radial-gradient(circle, rgba(124,232,255,.11), transparent 62%); filter:blur(8px)}
+.kicker{color:var(--cyan); letter-spacing:.14em; text-transform:uppercase; font-size:.82rem; margin-bottom:12px}
+.panel h3,.archive-card h3,.manifest h3{margin:0 0 14px}
+.panel h3{font-size:1.8rem}
+.panel p,.archive-card p{margin:0; color:var(--muted); line-height:1.82}
+.timeline{position:relative; padding-left:24px}
+.timeline:before{content:""; position:absolute; left:7px; top:8px; bottom:8px; width:2px; background:linear-gradient(180deg, rgba(124,232,255,.42), rgba(125,140,255,.15))}
+.event{position:relative; padding:0 0 28px 20px}
+.event:before{content:""; position:absolute; width:12px; height:12px; left:-2px; top:8px; border-radius:50%; background:var(--cyan)}
+.event h4{margin:0 0 6px; font-size:1.14rem}
+.event small{display:block; color:var(--gold); letter-spacing:.08em; text-transform:uppercase; margin-bottom:12px; font-size:.9rem}
+.event p{margin:0; color:var(--muted); line-height:1.8}
+.quote-card{padding:34px; font-size:clamp(1.28rem,2vw,1.7rem); line-height:1.7}
+.quote-card cite{display:block; margin-top:18px; color:var(--muted); font-style:normal; font-size:1rem}
+.workbench{display:grid; grid-template-columns:.92fr 1.08fr; gap:18px; align-items:start}
+.tool-list{display:grid; gap:12px}
+.tool-item{padding:16px 18px; display:flex; justify-content:space-between; align-items:start; gap:16px; border-radius:20px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03)}
+.tool-copy strong{display:block; font-size:1.2rem; margin-bottom:6px}
+.tool-copy p{margin:0; color:var(--muted); line-height:1.7}
+.tool-button{border:0; padding:11px 15px; min-width:112px; cursor:pointer; font:inherit; font-weight:700; background:rgba(124,232,255,.12); align-self:center}
+.helper{color:var(--muted); font-size:.96rem; line-height:1.65; margin:0 0 14px}
+.helper code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; color:var(--cyan)}
+textarea{width:100%; min-height:170px; resize:vertical; border-radius:18px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.16); color:var(--text); padding:16px; font:inherit; line-height:1.7}
+.output-box,.archetype-box{margin-top:18px; min-height:208px; border-radius:22px; border:1px dashed rgba(124,232,255,.28); background:rgba(255,255,255,.025); padding:18px; color:var(--muted); line-height:1.85}
+.archetype-box{min-height:260px}
+.archetype-card{display:grid; grid-template-columns:140px 1fr; gap:14px; align-items:center}
+.archetype-figure{width:140px; aspect-ratio:1; border-radius:22px; border:1px solid rgba(255,255,255,.08); background:linear-gradient(180deg, rgba(124,232,255,.08), rgba(125,140,255,.08)); display:grid; place-items:center; overflow:hidden}
+.archetype-meta h4{margin:0 0 8px; font-size:1.5rem; line-height:1.2}
+.archetype-meta p{margin:0 0 10px; color:var(--muted); line-height:1.75}
+.archetype-pill{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.03); color:var(--cyan); font-size:.9rem; margin-right:8px; margin-top:4px}
+.water-meter{min-height:340px; display:grid; place-items:center; position:relative; overflow:hidden}
+.water-ring{position:relative; width:250px; aspect-ratio:1; border-radius:50%; border:1px solid rgba(255,255,255,.12); overflow:hidden}
+.water-fill{position:absolute; left:0; right:0; bottom:0; height:66%; background:radial-gradient(circle at 50% -8%, rgba(255,255,255,.22), transparent 30%), linear-gradient(180deg, rgba(124,232,255,.46), rgba(124,232,255,.16)); transition:height 600ms ease}
+.water-fill:before{content:""; position:absolute; left:-20%; right:-20%; top:-22px; height:42px; background:
+ radial-gradient(30px 16px at 24px 20px, rgba(3,17,31,0) 55%, rgba(255,255,255,.34) 57% 61%, rgba(3,17,31,0) 63%),
+ radial-gradient(40px 18px at 100px 22px, rgba(3,17,31,0) 55%, rgba(255,255,255,.28) 57% 61%, rgba(3,17,31,0) 63%),
+ radial-gradient(35px 18px at 180px 20px, rgba(3,17,31,0) 55%, rgba(255,255,255,.34) 57% 61%, rgba(3,17,31,0) 63%);
+ background-size:220px 42px; animation:drift 5s linear infinite; opacity:.86}
+.water-label{position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:24px}
+.water-label strong{display:block; font-size:3.5rem; line-height:1; letter-spacing:-.05em}
+.water-label span{display:block; color:var(--muted); margin-top:10px; line-height:1.55; font-size:1rem}
+.footer{padding:26px 0 80px; color:var(--muted)}
+.footer-box{padding:24px; display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:center}
+.ghost-btn{padding:12px 16px; cursor:pointer; font:inherit}
+.reveal{opacity:0; transform:translateY(20px); transition:opacity .8s ease, transform .8s ease}
+.reveal.in{opacity:1; transform:none}
+.toast{position:fixed; right:16px; bottom:16px; z-index:60; max-width:340px; padding:14px 16px; border-radius:18px; background:rgba(6,21,36,.96); border:1px solid rgba(124,232,255,.2); transform:translateY(120%); transition:transform .32s ease}
+.toast.show{transform:translateY(0)}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+@keyframes pulse{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1.06) translateY(-8px)}}
+@keyframes sway{0%,100%{transform:translate(-50%,-85%) rotate(17deg)}50%{transform:translate(-50%,-85%) rotate(24deg)}}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0) rotate(-1deg)}50%{transform:translateX(-50%) translateY(-6px) rotate(1deg)}}
+@keyframes drift{from{background-position-x:0}to{background-position-x:320px}}
+@media (max-width:1140px){
+  .hero-grid,.workbench,.archive-grid,.grid-3,.grid-2{grid-template-columns:1fr}
+  .hero-visual{min-height:560px}.metrics{grid-template-columns:1fr}
+  .signature{position:static; transform:none; text-align:left; max-width:none; margin-left:auto}
+  .nav{min-height:auto; padding:14px 0; align-items:start; flex-wrap:wrap}
+}
+@media (max-width:760px){
+  .links{justify-content:start}
+  .brand-copy strong{font-size:1.2rem}.brand-copy span{font-size:.66rem}
+  .archetype-card{grid-template-columns:1fr}.archetype-figure{width:100%; max-width:180px}
+  .ship-art{height:214px}.quote-card{font-size:1.16rem}
+}
+</style>
+</head>
+<body>
+<canvas id="starsCanvas" aria-hidden="true"></canvas>
+<canvas id="oceanCanvas" aria-hidden="true"></canvas>
+<div class="noise" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="shell nav">
+    <div class="brand">
+      <div class="brand-mark">✦</div>
+      <div class="brand-copy">
+        <strong>Tidal Mythos</strong>
+        <span>A coded vessel of identity</span>
+      </div>
+    </div>
+    <div class="signature" aria-label="Site signature">
+      <div class="signature-name">Iain Amos Melchizedek</div>
+      <div class="signature-title">The Mariner of Inner Weather</div>
+    </div>
+    <nav class="links" aria-label="Primary navigation">
+      <a href="#story">Story</a>
+      <a href="#principles">Principles</a>
+      <a href="#workbench">Workbench</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="shell hero-grid">
+    <div class="reveal in">
+      <div class="eyebrow">⚓ Memory / Water / Meaning / Becoming</div>
+      <h1>
+        <span class="headline-white">A living harbor of story,</span>
+        <span class="headline-gradient">philosophy, and motion</span>
+      </h1>
+      <p class="lead">
+        This site is built as a mythic digital port— a place that exists within my own mind.
+        <br><br>
+        Part journal, part compass, part shipyard. A place where experience becomes structure, and structure becomes meaning.
+        <br><br>
+        It does not attempt to explain anyone else’s life—only my own. What you see here is the translation of lived experience into form.
+        <br><br>
+        Experience. Work. Water. Pressure. Not philosophy as theory—but as something earned.
+        <br><br>
+        I have stepped through frameworks, through voices that claim authority, through ideas of what it means to be “spiritual.”
+        <br><br>
+        But out there— in search and rescue, in open water, in weather that does not negotiate— none of that holds.
+        <br><br>
+        The ocean does not respond to belief. The wind does not adjust to your philosophy.
+        <br><br>
+        And in that, something becomes clear.
+        <br><br>
+        The self is not revealed through reflection, but through the unmerciful pressure of the elements.
+        <br><br>
+        That is where I was shaped. Not by doctrine—but by endurance.
+        <br><br>
+        The ocean did not try to destroy me. It simply was what it is.
+        <br><br>
+        And I had to become something that could meet it.
+        <br><br>
+        This site is what came from that. A vessel built from those conditions— where consciousness moves into form the way water always finds its level.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#workbench">Enter the shipyard →</a>
+      </div>
+      <div class="metrics">
+        <article class="metric card">
+          <span class="metric-symbol" id="marinerCount">001</span>
+          <div class="metric-label">Mariners Who Arrived</div>
+        </article>
+        <article class="metric card">
+          <span class="metric-symbol">∞</span>
+          <div class="metric-label">We are all ongoing transformations</div>
+        </article>
+        <article class="metric card">
+          <span class="metric-symbol">~</span>
+          <div class="metric-label">Ocean-based visual language</div>
+        </article>
+      </div>
+    </div>
+    <div class="hero-visual reveal in" aria-hidden="true">
+      <div class="orb one"></div><div class="orb two"></div><div class="orb three"></div>
+      <div class="compass"><div class="needle"></div></div>
+      <article class="ship-card card">
+        <div class="ship-art">
+          <div class="moon"></div>
+          <div class="boat">
+            <div class="mast"></div><div class="sail one"></div><div class="sail two"></div><div class="hull"></div>
+          </div>
+          <div class="wake"></div><div class="wave-line"></div>
+        </div>
+        <div style="padding-top:16px">
+          <div class="kicker">Vessel Signature / Archetype</div>
+          <h3 style="margin:0 0 12px;font-size:1.42rem">The Mariner of Inner Weather</h3>
+          <p style="margin:0;color:var(--muted);line-height:1.82">
+            Not a symbol but something shaped under real conditions. Formed in open water, in search and rescue, in weather that does not negotiate and does not care what you believe. Built through endurance, through adaptation, through meeting reality as it is without abstraction. A living framework that does not rush to define what it has not yet lived. The ocean did not teach through meaning. It taught through pressure. And in that, something took form. Not a story. Not a role. But a vessel that can hold.
+          </p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="story">
+  <div class="shell">
+    <div class="section-head reveal">
+      <div>
+        <h2>Story currents</h2>
+        <p class="section-copy">
+          This life was never a straight path. It has always moved like water—shifting, breaking, reforming under pressure.
+          <br><br>
+          Not shaped by ease, but by conditions that demanded adaptation early.
+          <br><br>
+          Over time, the current moved through systems—education, government, institutional structures—places that claim order, but often operate through hidden influence and human intervention.
+          <br><br>
+          Eventually, that current led into conflict. Not as a search for it—but as a result of seeing clearly and refusing to look away.
+          <br><br>
+          And then, beyond all of that—there was the ocean.
+          <br><br>
+          In open water, in search and rescue, in conditions that do not negotiate, something became undeniable:
+          <br><br>
+          reality does not respond to belief.
+          <br><br>
+          The elements do not adjust to philosophy.
+          <br><br>
+          They reveal what holds—and what does not.
+          <br><br>
+          From there, everything changed.
+          <br><br>
+          Authority lost its meaning. Belief lost its necessity.
+          <br><br>
+          What remained was something simpler:
+          <br><br>
+          to meet what is, as it is, and become something that can move within it.
+          <br><br>
+          This is where the current now runs—not toward certainty, but toward alignment with what is real.
+        </p>
+      </div>
+    </div>
+    <div class="grid-3 reveal">
+      <article class="panel card">
+        <div class="kicker">Origin</div>
+        <h3>The First Tide</h3>
+        <p>
+          Not all beginnings are gentle. Some are formed in pressure before there is language for it.
+          <br><br>
+          This is not a story of chosen conditions—but of adapting to what was already there.
+          <br><br>
+          Weather, atmosphere, instability—the early formation of instinct came from meeting what was real.
+        </p>
+      </article>
+      <article class="panel card">
+        <div class="kicker">Craft</div>
+        <h3>The Working Harbor</h3>
+        <p>
+          What holds is built through repetition under real conditions.
+          <br><br>
+          Not theory—but doing, adjusting, continuing.
+          <br><br>
+          Structure is not imagined here. It is tested.
+          <br><br>
+          Whatever remains is what can survive open water.
+        </p>
+      </article>
+      <article class="panel card">
+        <div class="kicker">Meaning</div>
+        <h3>The Star Map</h3>
+        <p>
+          Meaning is not inherited—it is formed.
+          <br><br>
+          Not through belief systems, but through what remains after pressure.
+          <br><br>
+          Patterns emerge not to explain reality, but to move within it.
+          <br><br>
+          What guides is not certainty—but alignment with what is.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="principles">
+  <div class="shell archive-grid">
+    <article class="panel card reveal">
+      <div class="kicker">Navigation Log</div>
+      <h2 style="font-size:2.3rem;margin-bottom:18px">Philosophy as seamanship</h2>
+      <div class="timeline">
+        <div class="event">
+          <h4>Hold reality without distortion</h4>
+          <small>Thinking Principle</small>
+          <p>Reality does not adjust to belief. What is, remains—whether understood or not. Clarity begins when interpretation stops interfering.</p>
+        </div>
+        <div class="event">
+          <h4>Let pressure reveal, not define</h4>
+          <small>Pressure Principle</small>
+          <p>The self is not formed in reflection, but revealed through conditions that do not negotiate. What remains is what holds.</p>
+        </div>
+        <div class="event">
+          <h4>Build what survives contact with reality</h4>
+          <small>Endurance Principle</small>
+          <p>Structure is not imagined—it is tested. What you build must function under pressure, not just in theory.</p>
+        </div>
+        <div class="event">
+          <h4>Move with what is, not what should be</h4>
+          <small>Alignment Principle</small>
+          <p>The elements are not against you. They simply are. Strength comes from meeting reality as it exists, not resisting it.</p>
+        </div>
+      </div>
+    </article>
+    <aside class="card quote-card reveal">
+      “Reality is not discovered through belief systems, but through direct confrontation under pressure. The elements do not teach through meaning—they teach through consequence.”
+      <cite>— Iain Amos Melchizedek</cite>
+    </aside>
+  </div>
+</section>
+
+<section class="section" id="workbench">
+  <div class="shell">
+    <div class="section-head reveal">
+      <div>
+        <h2>The shipyard workbench</h2>
+        <p class="section-copy">
+          This interactive section turns philosophy into playful functionality. It includes a mariner archetype reveal, a tide meter, and a myth engine built for generated compass lines and bottled messages.
+        </p>
+      </div>
+    </div>
+    <div class="workbench">
+      <aside class="tool-list reveal">
+        <div class="tool-item card">
+          <div class="tool-copy">
+            <strong>Reveal a mariner archetype</strong>
+            <p>Generates a character card with a symbolic silhouette, title, role, and guiding line.</p>
+          </div>
+          <button class="tool-button" data-action="archetype">Reveal</button>
+        </div>
+        <div class="tool-item card">
+          <div class="tool-copy">
+            <strong>Shift the sea mood</strong>
+            <p>Cycles the atmosphere through calibrated nocturnal palettes without breaking the tone of the site.</p>
+          </div>
+          <button class="tool-button" data-action="seaMode">Shift</button>
+        </div>
+        <div class="tool-item card">
+          <div class="tool-copy">
+            <strong>Reveal a compass sentence</strong>
+            <p>Assembles non-repeating guidance from a modular sentence engine. Ready to be replaced by a future model-backed generator.</p>
+          </div>
+          <button class="tool-button" data-action="compass">Reveal</button>
+        </div>
+        <div class="tool-item card">
+          <div class="tool-copy">
+            <strong>Cast a bottle into the future</strong>
+            <p>Returns a generated response from the deep, seeded by your own line and structured to avoid obvious repetition.</p>
+          </div>
+          <button class="tool-button" data-action="bottle">Cast</button>
+        </div>
+      </aside>
+
+      <section class="manifest card reveal" aria-labelledby="myth-engine-title">
+        <div class="kicker">Myth Engine</div>
+        <h3 id="myth-engine-title" style="font-size:2rem;letter-spacing:-.03em">Write a line for the sea to answer</h3>
+        <p class="helper">
+          Type a line, then click <strong>Cast</strong> or press <code>Ctrl + Enter</code>.
+          The current generators are modular, local, and intentionally stubbed for future model-backed expansion.
+        </p>
+        <label class="sr-only" for="promptBox">Write a line for the sea to answer</label>
+        <textarea id="promptBox" placeholder="Example: I am rebuilding under pressure, and I want to meet what is without distortion."></textarea>
+        <div class="archetype-box" id="archetypeBox">
+          The harbor is waiting. Reveal a mariner archetype to surface a living character card.
+        </div>
+        <div class="output-box" id="outputBox">
+          The sea is listening. Reveal a compass sentence, cast a bottle, or write a line of your own.
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="remains">
+  <div class="shell grid-2">
+    <article class="archive-card card reveal">
+      <div class="kicker">Archive Chamber</div>
+      <h3 style="font-size:2rem">What Remains</h3>
+      <p>
+        Identity does not hold under pressure. It fractures, shifts, or disappears entirely when conditions become real.
+        <br><br>
+        What remains is not what you call yourself—but what you are when there is nothing left to rely on.
+        <br><br>
+        Not personality. Not role. Not narrative.
+        <br><br>
+        But the underlying nature that meets reality as it is.
+        <br><br>
+        This is not about identity. It is about what holds when identity no longer matters.
+      </p>
+    </article>
+
+    <article class="water-meter card reveal">
+      <div class="water-ring" aria-label="Inner tide meter">
+        <div class="water-fill" id="waterFill"></div>
+        <div class="water-label">
+          <div>
+            <span class="kicker" style="display:block;margin-bottom:8px">Inner Tide</span>
+            <strong id="tideValue">66%</strong>
+            <span>Endurance / clarity / alignment</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="shell" style="margin-top:18px">
+    <aside class="card quote-card reveal">
+      “Identity does not matter. What matters is the understanding of your true nature, so that when you are met with what is, you meet it at its root—while remaining in your own root, as is.”
+      <cite>— Iain Amos Melchizedek</cite>
+    </aside>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="shell footer-box card">
+    <div>
+      <strong style="display:block;margin-bottom:8px;color:var(--text)">Tidal Mythos</strong>
+      <span>A personal maritime philosophy rendered as a single, portable HTML environment.</span>
+    </div>
+    <button class="ghost-btn" id="backToTopBtn" type="button">Back to top</button>
+  </div>
+</footer>
+
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<script>
+/**
+ * Tidal Mythos site controller.
+ *
+ * Goals:
+ * - Single-file portability for GitHub Pages.
+ * - Readable, modular JavaScript.
+ * - Clear upgrade stubs for analytics and model-backed generation.
+ * - Low repetition without external dependencies.
+ */
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => document.querySelectorAll(selector);
+
+const outputBox = $('#outputBox');
+const archetypeBox = $('#archetypeBox');
+const promptBox = $('#promptBox');
+const toast = $('#toast');
+
+const state = {
+  seaModeIndex: 0,
+  recentCompass: new Set(),
+  recentBottle: new Set(),
+  recentArchetypes: new Set(),
+};
+
+const seaModes = [
+  { name: 'Balanced Metaphysical', background: `
+    radial-gradient(circle at 20% 10%, rgba(124,232,255,.12), transparent 0 32%),
+    radial-gradient(circle at 80% 14%, rgba(125,140,255,.12), transparent 0 22%),
+    radial-gradient(circle at 55% 88%, rgba(255,101,207,.08), transparent 0 26%),
+    linear-gradient(180deg,#02101d 0%,#04172a 45%,#02101d 100%)
+  `},
+  { name: 'Abyss Violet', background: `
+    radial-gradient(circle at 18% 12%, rgba(124,232,255,.1), transparent 0 24%),
+    radial-gradient(circle at 82% 12%, rgba(176,139,255,.14), transparent 0 24%),
+    radial-gradient(circle at 50% 86%, rgba(255,101,207,.08), transparent 0 20%),
+    linear-gradient(180deg,#020c16 0%,#0a1630 52%,#02101d 100%)
+  `},
+  { name: 'Midnight Current', background: `
+    radial-gradient(circle at 16% 18%, rgba(124,232,255,.08), transparent 0 22%),
+    radial-gradient(circle at 76% 16%, rgba(125,140,255,.14), transparent 0 22%),
+    linear-gradient(180deg,#010913 0%,#03111f 44%,#010913 100%)
+  `},
+  { name: 'Stormglass', background: `
+    radial-gradient(circle at 30% 12%, rgba(255,255,255,.06), transparent 0 18%),
+    radial-gradient(circle at 76% 18%, rgba(124,232,255,.12), transparent 0 18%),
+    radial-gradient(circle at 58% 82%, rgba(176,139,255,.08), transparent 0 16%),
+    linear-gradient(180deg,#03111f 0%,#0b1e36 48%,#041220 100%)
+  `}
+];
+
+const archetypeData = {
+  titles: [
+    'The Harbor Listener',
+    'The Cartographer of Crosscurrents',
+    'The Keeper of Stormglass',
+    'The Mariner of Consequence',
+    'The Watchman Beneath Black Water',
+    'The Navigator of Rooted Weather',
+    'The Sounding Line Keeper',
+    'The Tidebound Witness'
+  ],
+  roles: [
+    'Quiet enough to hear what most people outrun.',
+    'Built to read changing conditions without abandoning internal ground.',
+    'Formed for pressure, not applause.',
+    'Able to remain in motion without leaving the root.',
+    'Made for contact with reality rather than protection from it.',
+    'Calm where abstraction fails.'
+  ],
+  principles: [
+    'Guiding line: What matters is what holds when conditions become real.',
+    'Guiding line: Do not ask whether it sounds good. Ask whether it survives contact.',
+    'Guiding line: Meet what is without distortion.',
+    'Guiding line: Remain in your own root when the weather changes.',
+    'Guiding line: Pressure is not always punishment. Often it is revelation.'
+  ],
+  silhouetteStyles: [
+    { sail: '#f6fbff', cloak: '#7ce8ff', sea: '#0b2137' },
+    { sail: '#eef6ff', cloak: '#b08bff', sea: '#091d30' },
+    { sail: '#ffffff', cloak: '#7d8cff', sea: '#081828' },
+    { sail: '#f4f8ff', cloak: '#ff65cf', sea: '#081a2e' }
+  ]
+};
+
+const compassParts = {
+  openings: [
+    'Meet the condition before you interpret it.',
+    'Do not negotiate with illusion.',
+    'What holds does not need performance.',
+    'Clarity rarely arrives in comfort.',
+    'When the weather changes, let reality speak first.',
+    'Not every silence is absence. Some silences are measurement.'
+  ],
+  middles: [
+    'Some truths arrive only after pressure strips away the decorative layer.',
+    'The next task is not to react more elegantly, but to remain more fully.',
+    'Endurance is often quieter than identity, and more trustworthy.',
+    'You do not need certainty to move. You need internal ground.',
+    'The elements do not care what story you prefer. They reveal what remains.',
+    'There is dignity in meeting what is before naming it.'
+  ],
+  closings: [
+    'Stand there long enough for the unnecessary to fall away.',
+    'Carry only what can survive open water.',
+    'Let the next motion come from the root rather than the surface.',
+    'Build for contact, not display.',
+    'Remain in your own root while the sea speaks.',
+    'Then move with what is, not with what flatters you.'
+  ]
+};
+
+const bottleParts = {
+  openings: [
+    'Across black water, a voice says:',
+    'A bottle returns from the deep:',
+    'From the undertow, a reply arrives:',
+    'The harbor sends back this answer:'
+  ],
+  responses: [
+    'What you carry is heavy, but it no longer needs to remain shapeless.',
+    'Pressure is already working on what is false. Let it.',
+    'You are not being asked to become theatrical. You are being asked to remain true.',
+    'The next movement may be quiet, but it can still be exact.',
+    'There is no need to rush what still needs to be tested by weather.',
+    'Sometimes the most faithful response is to stand and not distort.'
+  ],
+  closings: [
+    'Take one clear plank from this and build with it tomorrow.',
+    'Let the next tide meet you in alignment rather than reaction.',
+    'Do not force meaning where consequence is still teaching.',
+    'Keep what survives contact. Release what does not.',
+    'Return to root before you return to motion.'
+  ]
+};
+
+/**
+ * Show a small transient toast.
+ * @param {string} text
+ */
+function showToast(text) {
+  toast.textContent = text;
+  toast.classList.add('show');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove('show'), 2300);
+}
+
+/**
+ * Format the visitor stub count as fixed-width maritime numerals.
+ * @param {number} value
+ * @returns {string}
+ */
+function padCount(value) {
+  return String(value).padStart(3, '0');
+}
+
+/**
+ * Static-site visitor counter stub.
+ *
+ * Current behavior:
+ * - increments once per browser using localStorage
+ *
+ * Future path:
+ * - replace with serverless or analytics-backed endpoint
+ */
+function initMarinerCounter() {
+  const countEl = $('#marinerCount');
+  const visitedKey = 'tidal_mythos_has_visited';
+  const countKey = 'tidal_mythos_local_count';
+  const currentCount = Number(localStorage.getItem(countKey) || '0');
+  const hasVisited = localStorage.getItem(visitedKey) === 'true';
+
+  let nextCount = currentCount;
+  if (!hasVisited) {
+    nextCount += 1;
+    localStorage.setItem(visitedKey, 'true');
+    localStorage.setItem(countKey, String(nextCount));
+  }
+
+  countEl.textContent = padCount(Math.max(nextCount, 1));
+}
+
+/**
+ * Pick a non-repeating composite output from multiple pools.
+ * Clears history after exhausting all combinations.
+ * @param {string[][]} pools
+ * @param {Set<string>} history
+ * @returns {string[]}
+ */
+function pickComposite(pools, history) {
+  const total = pools.reduce((acc, pool) => acc * pool.length, 1);
+  if (history.size >= total) history.clear();
+
+  let result;
+  let key;
+  do {
+    result = pools.map((pool) => pool[Math.floor(Math.random() * pool.length)]);
+    key = result.join('||');
+  } while (history.has(key));
+
+  history.add(key);
+  return result;
+}
+
+/**
+ * Escape untrusted prompt content before writing to HTML.
+ * @param {string} unsafe
+ * @returns {string}
+ */
+function escapeHTML(unsafe) {
+  return unsafe
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+/**
+ * Render a symbolic mariner silhouette.
+ * This is a clean stub for future illustrated or model-backed character cards.
+ * @param {{ sail: string, cloak: string, sea: string }} palette
+ * @returns {string}
+ */
+function renderSilhouetteSVG(palette) {
+  return `
+    <svg viewBox="0 0 180 180" width="120" height="120" role="img" aria-label="Symbolic mariner silhouette">
+      <defs>
+        <linearGradient id="seaGrad" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="${palette.sea}" />
+          <stop offset="100%" stop-color="#03111f" />
+        </linearGradient>
+      </defs>
+      <circle cx="132" cy="42" r="18" fill="rgba(255,255,255,.82)"></circle>
+      <ellipse cx="90" cy="150" rx="52" ry="14" fill="rgba(124,232,255,.2)"></ellipse>
+      <path d="M48 132h84l-12 18H60z" fill="url(#seaGrad)"></path>
+      <rect x="89" y="72" width="4" height="62" fill="#d5b36b"></rect>
+      <path d="M93 82l44 28H93z" fill="${palette.sail}" opacity=".96"></path>
+      <path d="M87 94L55 120h32z" fill="${palette.cloak}" opacity=".82"></path>
+      <path d="M26 148c18-8 36-8 54 0" fill="none" stroke="rgba(124,232,255,.45)" stroke-width="3" stroke-linecap="round"></path>
+      <path d="M100 148c18-8 36-8 54 0" fill="none" stroke="rgba(124,232,255,.28)" stroke-width="3" stroke-linecap="round"></path>
+    </svg>
+  `;
+}
+
+/**
+ * Reveal a modular mariner archetype card.
+ */
+function revealArchetype() {
+  const [title, role, principle, styleIndex] = pickComposite(
+    [
+      archetypeData.titles,
+      archetypeData.roles,
+      archetypeData.principles,
+      archetypeData.silhouetteStyles.map((_, index) => String(index))
+    ],
+    state.recentArchetypes
+  );
+
+  const style = archetypeData.silhouetteStyles[Number(styleIndex)];
+  archetypeBox.innerHTML = `
+    <article class="archetype-card">
+      <div class="archetype-figure">${renderSilhouetteSVG(style)}</div>
+      <div class="archetype-meta">
+        <div class="kicker" style="margin-bottom:8px">Revealed Mariner</div>
+        <h4>${title}</h4>
+        <p>${role}</p>
+        <div class="archetype-pill">Character card stubbed for future illustrated/model-backed expansion</div>
+        <div class="archetype-pill">${principle}</div>
+      </div>
+    </article>
+  `;
+  showToast('Mariner archetype revealed.');
+}
+
+/**
+ * Reveal a non-repeating modular compass sentence.
+ */
+function revealCompassSentence() {
+  const [opening, middle, closing] = pickComposite(
+    [compassParts.openings, compassParts.middles, compassParts.closings],
+    state.recentCompass
+  );
+  outputBox.innerHTML = `${opening} ${middle} ${closing}`;
+  showToast('Compass sentence revealed.');
+}
+
+/**
+ * Generate a bottle response from an optional user prompt.
+ * @param {string} prompt
+ */
+function castBottle(prompt) {
+  const seed = prompt.trim() || 'I am listening for a sign.';
+  const [opening, response, closing] = pickComposite(
+    [bottleParts.openings, bottleParts.responses, bottleParts.closings],
+    state.recentBottle
+  );
+
+  outputBox.innerHTML = `
+    <strong>${opening}</strong>
+    <br><br>
+    <em>“${escapeHTML(seed)}”</em>
+    <br><br>
+    ${response}
+    <br><br>
+    ${closing}
+  `;
+  showToast('Bottle cast into the future.');
+}
+
+/**
+ * Rotate to the next calibrated body background.
+ */
+function shiftSeaMood() {
+  state.seaModeIndex = (state.seaModeIndex + 1) % seaModes.length;
+  document.body.style.background = seaModes[state.seaModeIndex].background;
+  showToast(`Sea mood changed to ${seaModes[state.seaModeIndex].name}.`);
+}
+
+/**
+ * Animate the inner tide meter inside bounded values.
+ */
+function initTideMeter() {
+  const tideValue = $('#tideValue');
+  const waterFill = $('#waterFill');
+  let tide = 66;
+
+  setInterval(() => {
+    tide += Math.random() > 0.5 ? 1 : -1;
+    tide = Math.min(74, Math.max(60, tide));
+    tideValue.textContent = `${tide}%`;
+    waterFill.style.height = `${tide}%`;
+  }, 1900);
+}
+
+/**
+ * Attach click and keyboard behavior.
+ */
+function bindUI() {
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-action]');
+    if (!button) return;
+
+    const action = button.dataset.action;
+    if (action === 'archetype') revealArchetype();
+    if (action === 'seaMode') shiftSeaMood();
+    if (action === 'compass') revealCompassSentence();
+    if (action === 'bottle') castBottle(promptBox.value);
+  });
+
+  promptBox.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && event.ctrlKey) {
+      event.preventDefault();
+      castBottle(promptBox.value);
+    }
+  });
+
+  $('#backToTopBtn').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+/**
+ * Reveal sections as they enter the viewport.
+ */
+function initRevealOnScroll() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) entry.target.classList.add('in');
+    });
+  }, { threshold: 0.12 });
+
+  $$('.reveal').forEach((element) => observer.observe(element));
+}
+
+/**
+ * Resize a canvas for crisp device-pixel rendering.
+ * @param {HTMLCanvasElement} canvas
+ * @returns {CanvasRenderingContext2D}
+ */
+function sizeCanvas(canvas) {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  canvas.width = width * window.devicePixelRatio;
+  canvas.height = height * window.devicePixelRatio;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  const context = canvas.getContext('2d');
+  context.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+  return context;
+}
+
+/**
+ * Seed and animate stars.
+ */
+function initStars() {
+  const canvas = $('#starsCanvas');
+  const context = sizeCanvas(canvas);
+  let stars = [];
+
+  function seedStars() {
+    stars = Array.from({ length: Math.min(190, Math.floor(window.innerWidth / 8)) }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight * 0.72,
+      r: Math.random() * 1.8 + 0.2,
+      a: Math.random() * 0.7 + 0.12,
+      delta: Math.random() * 0.015 + 0.003
+    }));
+  }
+
+  function draw() {
+    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    stars.forEach((star) => {
+      star.a += star.delta;
+      if (star.a > 0.95 || star.a < 0.12) star.delta *= -1;
+      context.beginPath();
+      context.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+      context.fillStyle = `rgba(255,255,255,${star.a})`;
+      context.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  seedStars();
+  draw();
+  window.addEventListener('resize', () => {
+    sizeCanvas(canvas);
+    seedStars();
+  });
+}
+
+/**
+ * Animate layered ocean bands.
+ */
+function initOcean() {
+  const canvas = $('#oceanCanvas');
+  const context = sizeCanvas(canvas);
+  let time = 0;
+
+  function draw() {
+    sizeCanvas(canvas);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    context.clearRect(0, 0, width, height);
+
+    for (let layer = 0; layer < 3; layer += 1) {
+      const baseY = height * (0.79 + layer * 0.05);
+      context.beginPath();
+      context.moveTo(0, height);
+
+      for (let x = 0; x <= width; x += 8) {
+        const y = baseY + Math.sin((x * 0.012) + time + layer) * (10 + layer * 5) + Math.sin((x * 0.005) + time * 1.4) * 8;
+        context.lineTo(x, y);
+      }
+
+      context.lineTo(width, height);
+      context.closePath();
+      context.fillStyle = [
+        'rgba(124, 232, 255, 0.08)',
+        'rgba(125, 140, 255, 0.08)',
+        'rgba(5, 20, 34, 0.9)'
+      ][layer];
+      context.fill();
+    }
+
+    time += 0.015;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+/**
+ * Boot the site.
+ */
+function init() {
+  initMarinerCounter();
+  initRevealOnScroll();
+  initTideMeter();
+  bindUI();
+  initStars();
+  initOcean();
+}
+
+init();
+</script>
+</body>
+</html>
